@@ -53,6 +53,7 @@ end
 
 local function request (endpoint, body, on_data, on_complete)
     local api_key = os.getenv("OPENAI_API_KEY")
+    local proxy_url = os.getenv("OPENAI_PROXY")
     if not api_key then
         on_complete("$OPENAI_API_KEY environment variable must be set")
         return
@@ -61,7 +62,7 @@ local function request (endpoint, body, on_data, on_complete)
     local curl_args = {
         "--silent", "--show-error", "--no-buffer",
         "--max-time", config.timeout,
-        "-L", "https://api.openai.com/v1/" .. endpoint,
+        "-L", proxy_url .. "/" .. endpoint,
         "-H", "Authorization: Bearer " .. api_key,
         "-X", "POST", "-H", "Content-Type: application/json",
         "-d", vim.json.encode(body),
