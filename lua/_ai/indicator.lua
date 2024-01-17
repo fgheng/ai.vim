@@ -51,8 +51,9 @@ end
 ---@param text string
 function M.set_preview_text (indicator, text)
     local extmark = vim.api.nvim_buf_get_extmark_by_id(indicator.buffer, ns_id, indicator.extmark_id, { details = true })
-    local start_row = extmark[1]
-    local start_col = extmark[2]
+    local start_row = extmark[1]+1
+    -- local start_col = extmark[2]
+    local start_col = 0
 
     if extmark[3].end_row or extmark[3].end_col then
         return -- We don't support preview text on indicators over a range
