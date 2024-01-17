@@ -121,13 +121,20 @@ end
 ---@param on_data fun(data: unknown): nil
 ---@param on_complete fun(err: string?): nil
 function M.edits (body, on_data, on_complete)
-    local prompt = body.prompt
+    local prompt = body.instruction
     local _input = body.input
-    body = vim.tbl_extend("keep", body, {
-        model = config.edits_model,
+    local request_body = {
+        model = config.completions_model,
         temperature = config.temperature,
-    })
-    request("edits", body, on_data, on_complete)
+        stream = true,
+        messages = {
+          {
+            role = "user",
+            content = prompt .. " " .. _input
+          }
+        }
+    }
+    request("completions", request_body, on_data, on_complete)
 end
 
 return M
