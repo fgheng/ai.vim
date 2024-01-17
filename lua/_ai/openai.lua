@@ -54,6 +54,9 @@ end
 local function request (endpoint, body, on_data, on_complete)
     local api_key = os.getenv("OPENAI_API_KEY")
     local proxy_url = os.getenv("OPENAI_PROXY")
+    if proxy_url == nil then
+        proxy_url = "https://api.openai.com/v1"
+    end
     if not api_key then
         on_complete("$OPENAI_API_KEY environment variable must be set")
         return
