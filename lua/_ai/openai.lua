@@ -102,19 +102,27 @@ end
 ---@param on_data fun(data: unknown): nil
 ---@param on_complete fun(err: string?): nil
 function M.completions (body, on_data, on_complete)
-    body = vim.tbl_extend("keep", body, {
+    local prompt = body.prompt
+    local request_body = {
         model = config.completions_model,
-        max_tokens = 2048,
         temperature = config.temperature,
         stream = true,
-    })
-    request("completions", body, on_data, on_complete)
+        messages = {
+          {
+            role = "user",
+            content = prompt
+          }
+        }
+    }
+    request("completions", request_body, on_data, on_complete)
 end
 
 ---@param body table
 ---@param on_data fun(data: unknown): nil
 ---@param on_complete fun(err: string?): nil
 function M.edits (body, on_data, on_complete)
+    local prompt = body.prompt
+    local _input = body.input
     body = vim.tbl_extend("keep", body, {
         model = config.edits_model,
         temperature = config.temperature,

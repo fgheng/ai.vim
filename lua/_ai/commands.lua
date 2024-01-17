@@ -53,7 +53,15 @@ function M.ai (args)
     local accumulated_text = ""
 
     local function on_data (data)
-        accumulated_text = accumulated_text .. data.choices[1].text
+        if data.choices[1]["delta"] == nil then
+            if data.choices[1]["content"] ~= nil then
+                accumulated_text = accumulated_text .. data.choices[1].content
+            end
+        else
+            if data.choices[1]["delta"]["content"] ~= nil then
+                accumulated_text = accumulated_text .. data.choices[1].delta.content
+            end
+        end
         indicator.set_preview_text(indicator_obj, accumulated_text)
     end
 
