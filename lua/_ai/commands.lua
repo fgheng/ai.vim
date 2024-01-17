@@ -74,49 +74,23 @@ function M.ai (args)
         indicator.finish(indicator_obj)
     end
 
+    local selected_text
     if visual_mode then
-        local selected_text = table.concat(vim.api.nvim_buf_get_text(buffer, start_row, start_col, end_row, end_col, {}), "\n")
-        if prompt == "" then
-            -- Replace the selected text, also using it as a prompt
-            openai.completions({
-                prompt = selected_text,
-            }, on_data, on_complete)
-        else
-            -- Edit selected text
-            openai.edits({
-                input = selected_text,
-                instruction = prompt,
-            }, on_data, on_complete)
-        end
+        selected_text = table.concat(vim.api.nvim_buf_get_text(buffer, start_row, start_col, end_row, end_col, {}), "\n")
     else
-        local cur_line = vim.api.nvim_get_current_line()
-
-        openai.completions({
-            prompt = prompt .. cur_line,
-            -- suffix = suffix,
-        }, on_data, on_complete)
-        -- if prompt == "" then
-        --     -- Insert some text generated using surrounding context
-        --     local prefix = table.concat(vim.api.nvim_buf_get_text(buffer,
-        --         math.max(0, start_row-config.context_before), 0, start_row, start_col, {}), "\n")
-        --
-        --     local line_count = vim.api.nvim_buf_line_count(buffer)
-        --     local suffix = table.concat(vim.api.nvim_buf_get_text(buffer,
-        --         end_row, end_col, math.min(end_row+config.context_after, line_count-1), 99999999, {}), "\n")
-        --
-        --     local cur_line = vim.api.nvim_get_current_line()
-        --
-        --     openai.completions({
-        --         prompt = cur_line,
-        --         -- suffix = suffix,
-        --     }, on_data, on_complete)
-        -- else
-        --     -- Insert some text generated using the given prompt
-        --     openai.completions({
-        --         prompt = prompt,
-        --     }, on_data, on_complete)
-        -- end
+        selected_text = vim.api.nvim_get_current_line()
     end
+
+    local new_prompt
+    if prompt == "" then
+        new_prompt = selected_text
+    else
+        new_prompt = prompt .. "\n" .. selected_text
+    end
+
+    openai.completions({
+        prompt = new_prompt,
+    }, on_data, on_complete)
 end
 
 return M
