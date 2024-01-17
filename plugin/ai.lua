@@ -6,9 +6,9 @@ end, {
 })
 
 if not vim.g.ai_no_mappings then
-    vim.api.nvim_set_keymap("n", "<cr>", ":AI ", { noremap = true })
+    vim.api.nvim_set_keymap("n", "<leader>a", ":AI ", { noremap = true })
     -- vim.api.nvim_set_keymap("v", "<cr>", ":AI ", { noremap = true })
-    vim.keymap.set("v", "<cr>", function ()
+    vim.keymap.set("v", "<leader>a", function ()
         local buffer = vim.api.get_current_buf()
         if vim.api.nvim_buf_get_option(buffer, 'buftype') == '' and vim.api.nvim_buf_get_option(buffer, 'modifiable') then
             vim.api.nvim_command("AI")
